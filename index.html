@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thank you</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f7f5f0;
+    color: #1a1a1a;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    line-height: 1.6;
+  }
+  .container { max-width: 720px; margin: 0 auto; }
+  .header { text-align: center; margin-bottom: 2.5rem; padding: 2rem 1rem; }
+  .header h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 42px;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+    color: #2c2c2a;
+  }
+  .header p { color: #5f5e5a; font-size: 15px; line-height: 1.7; }
+  .section-label {
+    font-size: 12px;
+    color: #888780;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 1rem 0.25rem;
+    font-weight: 500;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+  .tile {
+    background: #ffffff;
+    border: 1px solid #e5e2d8;
+    border-radius: 12px;
+    padding: 18px 12px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    color: #2c2c2a;
+    text-align: center;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+  .tile:hover {
+    background: #faf8f3;
+    border-color: #c9a961;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  .footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    border-top: 1px solid #e5e2d8;
+    margin-top: 1rem;
+  }
+  .footer .sign {
+    font-family: Georgia, serif;
+    font-style: italic;
+    color: #5f5e5a;
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+  .footer .name {
+    font-size: 17px;
+    font-weight: 500;
+    color: #2c2c2a;
+  }
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 100;
+    animation: fadeIn 0.2s ease;
+  }
+  .overlay.active { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2rem 1.75rem 1.75rem;
+    max-width: 460px;
+    width: 100%;
+    position: relative;
+    animation: slideUp 0.25s ease;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 22px;
+    color: #888780;
+    padding: 6px 10px;
+    line-height: 1;
+  }
+  .close:hover { color: #2c2c2a; }
+  .modal .m-name { font-size: 20px; font-weight: 500; margin-bottom: 4px; color: #2c2c2a; }
+  .modal .m-role { font-size: 13px; color: #888780; margin-bottom: 1.25rem; }
+  .modal .m-body {
+    font-family: Georgia, serif;
+    font-size: 16px;
+    line-height: 1.75;
+    color: #1a1a1a;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Thank you</h1>
+      <p>A small note of gratitude for each of you<br>before I move on to the next chapter.<br><span style="color:#888780; font-size:13px;">Tap a name to read.</span></p>
+    </div>
+
+    <p class="section-label">Leads &amp; Managers</p>
+    <div class="grid" id="leads-grid"></div>
+
+    <p class="section-label">Colleagues</p>
+    <div class="grid" id="colleagues-grid"></div>
+
+    <div class="footer">
+      <p class="sign">With gratitude,</p>
+      <p class="name">Sample User</p>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <button class="close" id="close">&times;</button>
+      <p class="m-name" id="m-name"></p>
+      <p class="m-role" id="m-role"></p>
+      <p class="m-body" id="m-body"></p>
+    </div>
+  </div>
+
+<script>
+  const leads = [
+    { name: 'Person A', role: 'Lead', note: 'Sample note one — this is where a personal message for the lead would appear when someone taps the tile.' },
+    { name: 'Person B', role: 'Lead', note: 'Sample note two — testing that longer messages display properly and remain readable on both desktop and mobile screens.' },
+    { name: 'Person C', role: 'Manager', note: 'Sample note three — checking layout, font, and modal behavior with a medium-length placeholder message.' },
+    { name: 'Person D', role: 'Manager', note: 'Sample note four — verifying the tile grid wraps correctly and the modal opens smoothly.' },
+    { name: 'Person E', role: 'Lead', note: 'Sample note five — final lead tile to confirm all five entries render side by side.' }
+  ];
+
+  const colleagues = [
+    { name: 'Person F', role: 'Colleague', note: 'Colleague sample one — checking the second section renders with its own label and grid.' },
+    { name: 'Person G', role: 'Colleague', note: 'Colleague sample two — testing tap interaction and modal close.' },
+    { name: 'Person H', role: 'Colleague', note: 'Colleague sample three — placeholder text for layout verification.' },
+    { name: 'Person I', role: 'Colleague', note: 'Colleague sample four — nothing personal here, just filler.' },
+    { name: 'Person J', role: 'Colleague', note: 'Colleague sample five — mid-length filler text for the modal body.' },
+    { name: 'Person K', role: 'Colleague', note: 'Colleague sample six — checking name display and role subtitle.' },
+    { name: 'Person L', role: 'Colleague', note: 'Colleague sample seven — one more sample entry.' },
+    { name: 'Person M', role: 'Colleague', note: 'Colleague sample eight — nearly done.' },
+    { name: 'Person N', role: 'Colleague', note: 'Colleague sample nine — final colleague tile.' }
+  ];
+
+  const overlay = document.getElementById('overlay');
+  const mName = document.getElementById('m-name');
+  const mRole = document.getElementById('m-role');
+  const mBody = document.getElementById('m-body');
+
+  function render(list, containerId) {
+    const container = document.getElementById(containerId);
+    list.forEach(p => {
+      const btn = document.createElement('button');
+      btn.className = 'tile';
+      btn.textContent = p.name;
+      btn.addEventListener('click', () => {
+        mName.textContent = p.name;
+        mRole.textContent = p.role;
+        mBody.textContent = p.note;
+        overlay.classList.add('active');
+      });
+      container.appendChild(btn);
+    });
+  }
+
+  render(leads, 'leads-grid');
+  render(colleagues, 'colleagues-grid');
+
+  document.getElementById('close').addEventListener('click', () => overlay.classList.remove('active'));
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('active'); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') overlay.classList.remove('active'); });
+</script>
+</body>
+</html>
